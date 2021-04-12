@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class Predict {
 
-    private static boolean flag_predict_probability = false;
+    private boolean flag_predict_probability = false;
 
     private static final Pattern COLON = Pattern.compile(":");
 
