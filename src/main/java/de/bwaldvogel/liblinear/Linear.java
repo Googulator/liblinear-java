@@ -2255,7 +2255,7 @@ public class Linear {
 
     private static void train_one(Problem prob, Parameter param, double[] w, double Cp, double Cn) {
         SolverType solver_type = param.solverType;
-        int dual_solver_max_iter = 300;
+        int dual_solver_max_iter = param.dual_solver_max_iters;
         int iter;
 
         // upstream: (solver_type==L2R_L2LOSS_SVR || solver_type==L2R_L1LOSS_SVR_DUAL || solver_type==L2R_L2LOSS_SVR_DUAL)
