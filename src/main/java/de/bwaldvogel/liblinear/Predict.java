@@ -26,7 +26,7 @@ public class Predict {
     /**
      * <p><b>Note: The streams are NOT closed</b></p>
      */
-    void doPredict(BufferedReader reader, Writer writer, Model model, boolean flag_predict_probability) throws IOException {
+    static void doPredict(BufferedReader reader, Writer writer, Model model, boolean flag_predict_probability) throws IOException {
         int correct = 0;
         int total = 0;
         double error = 0;
