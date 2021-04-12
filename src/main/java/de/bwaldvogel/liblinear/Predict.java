@@ -21,14 +21,12 @@ import java.util.regex.Pattern;
 
 public class Predict {
 
-    private boolean flag_predict_probability = false;
-
     private static final Pattern COLON = Pattern.compile(":");
 
     /**
      * <p><b>Note: The streams are NOT closed</b></p>
      */
-    static void doPredict(BufferedReader reader, Writer writer, Model model) throws IOException {
+    void doPredict(BufferedReader reader, Writer writer, Model model, boolean flag_predict_probability) throws IOException {
         int correct = 0;
         int total = 0;
         double error = 0;
@@ -147,6 +145,7 @@ public class Predict {
 
     public static void main(String[] argv) throws IOException {
         int i;
+        boolean flag_predict_probability = false;
 
         // parse options
         for (i = 0; i < argv.length; i++) {
@@ -182,7 +181,7 @@ public class Predict {
              FileOutputStream out = new FileOutputStream(argv[i + 2]);
              Writer writer = new BufferedWriter(new OutputStreamWriter(out, Linear.FILE_CHARSET))) {
             Model model = Linear.loadModel(Paths.get(argv[i + 1]));
-            doPredict(reader, writer, model);
+            doPredict(reader, writer, model, flag_predict_probability);
         }
     }
 }
