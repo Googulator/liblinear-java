@@ -185,6 +185,12 @@ public class Train {
                 case 'e':
                     param.setEps(atof(argv[i]));
                     break;
+                case 'm':
+                    param.setMaxIters(atoi(argv[i]));
+                    break;
+                case 'd':
+                    param.setDualSolverMaxIters(atoi(argv[i]));
+                    break;
                 case 'B':
                     bias = atof(argv[i]);
                     break;
