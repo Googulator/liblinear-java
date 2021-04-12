@@ -11,6 +11,8 @@ public final class Parameter implements Cloneable {
     double eps;
 
     int max_iters = 1000; // maximal iterations
+    
+    int dual_solver_max_iters = 300;
 
     SolverType solverType;
 
@@ -42,6 +44,14 @@ public final class Parameter implements Cloneable {
         setMaxIters(max_iters);
     }
 
+    public Parameter(SolverType solver, double C, int max_iters, int dual_solver_max_iters, double eps) {
+        setSolverType(solver);
+        setC(C);
+        setEps(eps);
+        setMaxIters(max_iters);
+        setDualSolverMaxIters(dual_solver_max_iters);
+    }
+
     public Parameter(SolverType solverType, double C, double eps, double p) {
         setSolverType(solverType);
         setC(C);
@@ -54,6 +64,15 @@ public final class Parameter implements Cloneable {
         setC(C);
         setEps(eps);
         setMaxIters(max_iters);
+        setP(p);
+    }
+
+    public Parameter(SolverType solverType, double C, double eps, int max_iters, int dual_solver_max_iters, double p) {
+        setSolverType(solverType);
+        setC(C);
+        setEps(eps);
+        setMaxIters(max_iters);
+        setDualSolverMaxIters(dual_solver_max_iters);
         setP(p);
     }
 
@@ -144,6 +163,16 @@ public final class Parameter implements Cloneable {
         return max_iters;
     }
 
+    public void setDualSolverMaxIters(int iters) {
+        if (iters <= 0)
+            throw new IllegalArgumentException("dual solver max iters not be <= 0");
+        this.dual_solver_max_iters = iters;
+    }
+
+    public int getDualSolverMaxIters() {
+        return dual_solver_max_iters;
+    }
+
     public void setSolverType(SolverType solverType) {
         if (solverType == null)
             throw new IllegalArgumentException("solver type must not be null");
@@ -208,7 +237,7 @@ public final class Parameter implements Cloneable {
 
     @Override
     public Parameter clone() {
-        Parameter clone = new Parameter(solverType, C, eps, max_iters, p);
+        Parameter clone = new Parameter(solverType, C, eps, max_iters, dual_solver_max_iters, p);
         clone.weight = weight == null ? null : weight.clone();
         clone.weightLabel = weightLabel == null ? null : weightLabel.clone();
         clone.init_sol = init_sol;
