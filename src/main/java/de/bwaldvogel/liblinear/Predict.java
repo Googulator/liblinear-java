@@ -135,15 +135,14 @@ public class Predict {
         }
     }
 
-    private static void exit_with_help() {
+    private static void print_help() {
         System.out.printf("Usage: predict [options] test_file model_file output_file%n" //
             + "options:%n" //
             + "-b probability_estimates: whether to output probability estimates, 0 or 1 (default 0); currently for logistic regression only%n" //
             + "-q quiet mode (no outputs)%n");
-        System.exit(1);
     }
 
-    public static void main(String[] argv) throws IOException {
+    public static int run(String[] argv) throws IOException {
         int i;
         boolean flag_predict_probability = false;
 
@@ -157,7 +156,8 @@ public class Predict {
                     try {
                         flag_predict_probability = (atoi(argv[i]) != 0);
                     } catch (NumberFormatException e) {
-                        exit_with_help();
+                        print_help();
+                        return 1;
                     }
                     break;
 
@@ -168,12 +168,13 @@ public class Predict {
 
                 default:
                     System.err.printf("unknown option: -%d%n", argv[i - 1].charAt(1));
-                    exit_with_help();
-                    break;
+                    print_help();
+                    return 1;
             }
         }
         if (i >= argv.length || argv.length <= i + 2) {
-            exit_with_help();
+            print_help();
+            return 1;
         }
 
         try (FileInputStream in = new FileInputStream(argv[i]);
@@ -183,5 +184,11 @@ public class Predict {
             Model model = Linear.loadModel(Paths.get(argv[i + 1]));
             doPredict(reader, writer, model, flag_predict_probability);
         }
+        
+        return 0;
+    }
+
+    public static void main(String[] argv) throws IOException {
+        System.exit(run(argv));
     }
 }
