@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
 public class Train {
 
     public static void main(String[] args) throws IOException, InvalidInputDataException {
-        new Train().run(args);
+        System.exit(new Train().run(args));
     }
 
     private double    bias             = 1;
@@ -92,7 +92,7 @@ public class Train {
         }
     }
 
-    private void exit_with_help() {
+    private void print_help() {
         System.out.printf("Usage: train [options] training_set_file [model_file]%n" //
             + "options:%n"
             + "-s type : set type of solver (default 1)%n"
@@ -136,7 +136,6 @@ public class Train {
             + "-v n: n-fold cross validation mode%n"
             + "-C : find parameters (C for -s 0, 2 and C, p for -s 11)%n"
             + "-q : quiet mode (no outputs)%n");
-        System.exit(1);
     }
 
     public Problem getProblem() {
@@ -151,7 +150,7 @@ public class Train {
         return param;
     }
 
-    public void parse_command_line(String argv[]) {
+    public boolean parse_command_line(String argv[]) {
         int i;
 
         // eps: see setting below
@@ -164,8 +163,10 @@ public class Train {
         for (i = 0; i < argv.length; i++) {
             if (argv[i].charAt(0) != '-')
                 break;
-            if (++i >= argv.length)
-                exit_with_help();
+            if (++i >= argv.length) {
+                print_help();
+                return false;
+            }
             switch (argv[i - 1].charAt(1)) {
                 case 's':
                     param.solverType = SolverType.getById(atoi(argv[i]));
@@ -205,7 +206,8 @@ public class Train {
                     nr_fold = atoi(argv[i]);
                     if (nr_fold < 2) {
                         System.err.println("n-fold cross validation: n must >= 2");
-                        exit_with_help();
+                        print_help();
+                        return false;
                     }
                     break;
                 case 'q':
@@ -222,14 +224,17 @@ public class Train {
                     break;
                 default:
                     System.err.println("unknown option");
-                    exit_with_help();
+                    print_help();
+                    return false;
             }
         }
 
         // determine filenames
 
-        if (i >= argv.length)
-            exit_with_help();
+        if (i >= argv.length) {
+            print_help();
+            return 1;
+        }
 
         inputFilename = argv[i];
 
@@ -250,7 +255,8 @@ public class Train {
                 param.setSolverType(L2R_L2LOSS_SVC);
             } else if (param.getSolverType() != L2R_LR && param.getSolverType() != L2R_L2LOSS_SVC && param.getSolverType() != L2R_L2LOSS_SVR) {
                 System.err.printf("Warm-start parameter search only available for -s 0, -s 2 and -s 11%n");
-                exit_with_help();
+                print_help();
+                return false;
             }
         }
 
@@ -284,6 +290,8 @@ public class Train {
                     throw new IllegalStateException("unknown solver type: " + param.solverType);
             }
         }
+        
+        return true;
     }
 
     /**
@@ -453,8 +461,9 @@ public class Train {
         return prob;
     }
 
-    private void run(String[] args) throws IOException, InvalidInputDataException {
-        parse_command_line(args);
+    private int run(String[] args) throws IOException, InvalidInputDataException {
+        if (!parse_command_line(args))
+            return 1;
         readProblem(inputFilename);
         if (find_parameters) {
             do_find_parameters();
@@ -464,6 +473,8 @@ public class Train {
             Model model = Linear.train(prob, param);
             Linear.saveModel(Paths.get(modelFilename), model);
         }
+
+        return 0;
     }
 
     boolean isFindParameters() {
