@@ -233,7 +233,7 @@ public class Train {
 
         if (i >= argv.length) {
             print_help();
-            return 1;
+            return false;
         }
 
         inputFilename = argv[i];
