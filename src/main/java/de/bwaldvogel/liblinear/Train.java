@@ -187,6 +187,9 @@ public class Train {
                     param.setEps(atof(argv[i]));
                     break;
                 case 'm':
+                    // ignore for compatibility with multicore liblinear
+                    break;
+                case 'i':
                     param.setMaxIters(atoi(argv[i]));
                     break;
                 case 'd':
