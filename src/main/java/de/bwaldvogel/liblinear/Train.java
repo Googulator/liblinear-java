@@ -464,7 +464,7 @@ public class Train {
         return prob;
     }
 
-    private int run(String[] args) throws IOException, InvalidInputDataException {
+    public int run(String[] args) throws IOException, InvalidInputDataException {
         if (!parse_command_line(args))
             return 1;
         readProblem(inputFilename);
