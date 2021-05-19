@@ -88,7 +88,7 @@ public final class Model implements Serializable {
      * @return true for logistic regression solvers
      */
     public boolean isProbabilityModel() {
-        return solverType.isLogisticRegressionSolver();
+        return true; //solverType.isLogisticRegressionSolver();
     }
 
     /**
