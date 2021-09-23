@@ -2,6 +2,9 @@ buildscript {
     repositories {
         mavenCentral()
     }
+    dependencyLocking {
+        lockAllConfigurations()
+    }
 }
 
 plugins {
@@ -9,8 +12,8 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'jacoco'
-    id 'de.undercouch.download' version '4.1.1'
-    id 'me.champeau.gradle.jmh' version '0.5.3'
+    id 'de.undercouch.download' version 'latest.release'
+    id 'me.champeau.gradle.jmh' version 'latest.release'
 }
 
 group = "de.bwaldvogel"
@@ -21,13 +24,9 @@ targetCompatibility = 1.8
 
 compileJava.options.encoding = 'UTF-8'
 
-ext {
-    title = 'liblinear'
-}
-
 jar {
     manifest {
-        attributes 'Implementation-Title': title, 'Implementation-Version': archiveVersion
+        attributes 'Implementation-Title': project.name, 'Implementation-Version': archiveVersion
     }
 }
 
@@ -44,11 +43,11 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId = 'de.bwaldvogel'
-            artifactId = 'liblinear'
+            groupId = project.group
+            artifactId = project.name
             version = project.version
             pom {
-                name = title
+                name = project.name
                 description = 'Java port of Liblinear'
                 url = 'https://github.com/bwaldvogel/liblinear'
                 inceptionYear = '2008'
@@ -111,9 +110,9 @@ repositories {
 
 jacocoTestReport {
     reports {
-        html.enabled = true
-        xml.enabled = true
-        csv.enabled = false
+        html.required = true
+        xml.required = true
+        csv.required = false
     }
     dependsOn test
 }
@@ -129,7 +128,7 @@ test {
 }
 
 wrapper {
-    gradleVersion = "7.0"
+    gradleVersion = "7.2"
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -155,11 +154,8 @@ dependencies {
     jmh 'org.openjdk.jmh:jmh-generator-annprocess:latest.release' // for IntelliJ
 
     components.all { ComponentMetadataDetails details ->
-        details.statusScheme = ['candidate', 'release']
         if (details.id.version =~ /(?i).+([-.])(CANDIDATE|RC|BETA|ALPHA).*/) {
-            details.status = 'candidate'
-        } else {
-            details.status = 'release'
+            details.status = 'milestone'
         }
     }
 }

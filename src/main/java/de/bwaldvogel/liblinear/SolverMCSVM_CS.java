@@ -3,6 +3,7 @@ package de.bwaldvogel.liblinear;
 import static de.bwaldvogel.liblinear.Linear.*;
 
 import java.util.Arrays;
+import java.util.Random;
 
 
 /**
@@ -38,23 +39,17 @@ class SolverMCSVM_CS {
     private final int      w_size, l;
     private final int     nr_class;
     private final Problem prob;
+    private final Random  random;
 
-    public SolverMCSVM_CS(Problem prob, int nr_class, double[] C) {
-        this(prob, nr_class, C, 0.1);
-    }
-
-    public SolverMCSVM_CS(Problem prob, int nr_class, double[] C, double eps) {
-        this(prob, nr_class, C, eps, 100000);
-    }
-
-    public SolverMCSVM_CS(Problem prob, int nr_class, double[] weighted_C, double eps, int max_iter) {
+    public SolverMCSVM_CS(Problem prob, int nr_class, double[] C, double eps, Random random) {
         this.w_size = prob.n;
         this.l = prob.l;
         this.nr_class = nr_class;
         this.eps = eps;
-        this.max_iter = max_iter;
+        this.random = random;
+        this.max_iter = 100000;
         this.prob = prob;
-        this.C = weighted_C;
+        this.C = C;
         this.B = new double[nr_class];
         this.G = new double[nr_class];
     }
@@ -123,7 +118,7 @@ class SolverMCSVM_CS {
 
             for (i = 0; i < active_size; i++) {
                 // int j = i+rand()%(active_size-i);
-                int j = i + Linear.random.nextInt(active_size - i);
+                int j = i + random.nextInt(active_size - i);
                 swap(index, i, j);
             }
             for (s = 0; s < active_size; s++) {

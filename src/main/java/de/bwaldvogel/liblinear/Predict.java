@@ -143,8 +143,9 @@ public class Predict {
     }
 
     public static int run(String[] argv) throws IOException {
-        int i;
+        // Note: This flag is _static_ in predict.c but it causes a thread-safety issue as reported in https://github.com/bwaldvogel/liblinear-java/issues/38
         boolean flag_predict_probability = false;
+        int i;
 
         // parse options
         for (i = 0; i < argv.length; i++) {
